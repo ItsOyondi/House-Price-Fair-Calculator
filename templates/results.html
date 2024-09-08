@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1 {
+            color: #34495e;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .result {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .price-info {
+            font-size: 20px;
+            margin: 10px 0;
+            color: #27ae60;
+        }
+        .zipcode {
+            font-size: 18px;
+            color: #e74c3c;
+        }
+        .back-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .back-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+        .back-btn:active {
+            transform: translateY(1px);
+        }
+        .alternative-prices {
+            margin-top: 30px;
+        }
+        .alternative-prices h2 {
+            font-size: 22px;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>House Price Prediction</h1>
+    <div class="result">
+        <p>Your predicted house price at zipcode: {{selected_zip}} is:</p>
+        <p class="price-info">$ {{ prediction }}</p>
+    </div>
+
+    <div class="alternative-prices">
+        <h2>Cheapest</h2>
+        <p class="zipcode">Zipcode: {{ min_zipcode }}</p>
+        <p class="price-info">Price: $ {{ min_value }}</p>
+        
+        <h2>Most Expensive</h2>
+        <p class="zipcode">Zipcode: {{ max_zipcode }}</p>
+        <p class="price-info">Price: $ {{ max_value }}</p>
+    </div>
+
+    <a href="/predict_prices" class="back-btn">Go Back</a>
+</div>
+
+</body>
+</html>
