@@ -2,11 +2,12 @@ import numpy as np
 import warnings
 import joblib
 import json
-from Regressors import RidgeRegression
+# from Regressors import RidgeRegression, KNNClassifier
 warnings.filterwarnings('ignore')
 
 __zipcodes = None
 __model = None
+__model2 = None
 
 def minmax_scaler(data):
     min_val = np.min(data)
@@ -21,7 +22,7 @@ def MAPE(y,y_hat):
 def inverse_transform(column):
     return 1 / np.where(column != 0, column, 1)
 
-def predict_house_price(zipcode,bathrooms, sqrt_ft, fireplaces, house_age, has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer, has_Microwave, has_Countertops, has_Pantry, has_Others_appliances):
+def predict_house_price(zipcode,bathrooms, sqrt_ft, fireplaces, house_age, has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer, has_Microwave, has_Countertops, has_Pantry, has_Others_appliances, category):
     
     try:
         loc_index = __zipcodes.index(zipcode)
@@ -42,7 +43,7 @@ def predict_house_price(zipcode,bathrooms, sqrt_ft, fireplaces, house_age, has_D
     fireplaces = scale_single_pred_value(fireplaces, fire_min, fire_max)
     house_age = inverse_transform(house_age)
 
-    x = np.zeros(len(__zipcodes)+12) #Added 12 to make to the number of required features
+    x = np.zeros(len(__zipcodes)+13) #Added 12 to make to the number of required features
 
     x[0] = bathrooms
     x[1] = sqrt_ft
@@ -56,16 +57,18 @@ def predict_house_price(zipcode,bathrooms, sqrt_ft, fireplaces, house_age, has_D
     x[9] = has_Countertops
     x[10] = has_Pantry
     x[11] = has_Others_appliances
-
+    x[12]  = category
     if loc_index >= 0:
         x[loc_index] = 1
 
     return round(__model.predict([x])[0],2)
-
-def get_house_predictions(__zipcodes, bathrooms, sqrt_ft, fireplaces, house_age, has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer, has_Microwave, has_Countertops, has_Pantry, has_Others_appliances):
+def get_class(longitude, latitude):
+    category = __model2.predict([[latitude, longitude]], 3)
+    return category
+def get_house_predictions(__zipcodes, bathrooms, sqrt_ft, fireplaces, house_age, has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer, has_Microwave, has_Countertops, has_Pantry, has_Others_appliances, category):
   zip_location_with_predicted_price = {}
   for zipcode in __zipcodes:
-    predicted = round(predict_house_price(zipcode, bathrooms, sqrt_ft, fireplaces, house_age, has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer, has_Microwave, has_Countertops, has_Pantry, has_Others_appliances),2)
+    predicted = round(predict_house_price(zipcode, bathrooms, sqrt_ft, fireplaces, house_age, has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer, has_Microwave, has_Countertops, has_Pantry, has_Others_appliances, category),2)
     zip_location_with_predicted_price[zipcode] = predicted
   return zip_location_with_predicted_price
 def get_min_max_from_dict(data_dict):
@@ -78,16 +81,19 @@ def get_min_max_from_dict(data_dict):
 def load_artifacts():
     global __zipcodes
     global __model
+    global __model2
 
     print("Loading Artifacts ... started")
     with open('artifacts/zipcodes.json', 'r') as f:
             __zipcodes = json.load(f)['zipcodes']
     __model = joblib.load('artifacts/HousePriceDecisionModel.model')
 
+    __model2 = joblib.load('artifacts/knn_classifier.model')
+
     print("Artifacts loading ... completed")
 
 if __name__ == '__main__':
      load_artifacts()
-     print(predict_house_price(85605, 10, 2000, 3,20, 1,1,1,1,1,1,1,1))
+     print(predict_house_price(85605, 10, 2000, 3,20, 1,1,1,1,1,1,1,1, 4, 6))
      print("----------------")
-     print(get_min_max_from_dict(get_house_predictions(__zipcodes, 10, 2000, 3,20, 1,1,1,1,1,1,1,1)))
+     print(get_min_max_from_dict(get_house_predictions(__zipcodes, 10, 2000, 3,20, 1,1,1,1,1,1,1,1, 4, 6)))

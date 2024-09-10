@@ -1,5 +1,7 @@
 
 import numpy as np
+import matplotlib.pyplot as plt
+import util
 ## KNN Classifier - chosen because of its higher accuracy
 class KNNClassifier():
   #defining training function
@@ -26,7 +28,7 @@ class KNNClassifier():
     return y_hat.astype(int)
 
   def accuracy(self, y, y_pred):
-    return np.mean((y==y_pred))
+    return np.mean(y==y_pred)
 
 ## Multivariate Regression model
 class MVLinearRegression():
@@ -41,7 +43,7 @@ class MVLinearRegression():
     #stochastic Gradient Descent
     for epoch in range(epochs):
       y_hat = self.predict(X)
-      self.j[epoch] = OLS(X,y, y_hat)
+      self.j[epoch] = util.OLS(X,y, y_hat)
       #weight update rule
       self.w -= eta*(1/N)*(X.T@(y_hat-Y))
     if show_curve:
@@ -66,7 +68,7 @@ class RidgeRegression():
         for epoch in range(epochs):
             y_hat = self.predict(X)
             # Calculate the cost function with # L2 regularization
-            self.j[epoch] = OLS(X, y, y_hat) + (lambda_/2) * np.sum(self.w**2)
+            self.j[epoch] = util.OLS(X, y, y_hat) + (lambda_/2) * np.sum(self.w**2)
 
             # calculate gradient against the weights
             grad_w = (1/N) * (X.T @ (y_hat - Y))

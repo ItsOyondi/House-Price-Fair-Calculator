@@ -2,11 +2,11 @@ from flask import Flask, render_template, request, jsonify
 import joblib
 import numpy as np
 import util
+from Regressors import RidgeRegression, KNNClassifier
 
 app = Flask(__name__)
-from Regressors import RidgeRegression
-# Load the model
-model = joblib.load('artifacts/HousePriceDecisionModel.model')
+
+
 
 @app.route('/predict_prices', methods=['GET', 'POST'])
 def predict_prices():
@@ -16,6 +16,14 @@ def predict_prices():
             zipcode = request.form.get('zipcode')
             bathrooms = float(request.form.get('bathrooms'))
             sqrt_ft = float(request.form.get('sqrt_ft'))
+            latitude = request.form.get('latitude')
+            longitude = request.form.get('longitude')
+
+            try:
+                latitude = float(latitude)
+                longitude = float(longitude)
+            except ValueError:
+                return "Invalid latitude or longitude input."
             fireplaces = float(request.form.get('fireplaces'))
             house_age = float(request.form.get('house_age'))
             has_Dishwasher = 1 if request.form.get('has_Dishwasher') else 0
@@ -26,13 +34,15 @@ def predict_prices():
             has_Countertops = 1 if request.form.get('has_Countertops') else 0
             has_Pantry = 1 if request.form.get('has_Pantry') else 0
             has_Others_appliances = 1 if request.form.get('has_Others_appliances') else 0
+            category = util.get_class(longitude, latitude)
+
             # Make a prediction
             prediction =  util.predict_house_price(zipcode, bathrooms, sqrt_ft, fireplaces, house_age,
                                   has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer,
-                                  has_Microwave, has_Countertops, has_Pantry, has_Others_appliances)
+                                  has_Microwave, has_Countertops, has_Pantry, has_Others_appliances, category)
             min_price, max_price = util.get_min_max_from_dict(util.get_house_predictions(util.__zipcodes,bathrooms, sqrt_ft, fireplaces, house_age,
                                   has_Dishwasher, has_Oven, has_Refrigerator, has_Freezer,
-                                  has_Microwave, has_Countertops, has_Pantry, has_Others_appliances))
+                                  has_Microwave, has_Countertops, has_Pantry, has_Others_appliances, category))
 
             # Return the prediction result
             # Extract zip codes and values for max and min prices

@@ -7,7 +7,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
+            background-image: url('suburban-home.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
             margin: 0;
             padding: 20px;
         }
@@ -18,6 +20,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); /* Optional: for a subtle blur effect */
         }
         h1 {
             text-align: center;
@@ -85,6 +88,13 @@
 
         <label for="house_age">House Age (years):</label>
         <input type="number" id="house_age" name="house_age" required>
+
+        <!-- New Longitude and Latitude Fields -->
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" placeholder="Enter longitude" required>
+
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" placeholder="Enter latitude" required>
 
         <label>Appliances:</label>
         <div class="checkbox-group">
